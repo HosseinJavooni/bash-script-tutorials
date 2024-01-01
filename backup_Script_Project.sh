@@ -11,4 +11,7 @@
 # backup_script_project.sh
 
 tar -cvf ~/bash-script-tutorials/backup_"$(date +%Y-%m-%d'T'%H_%M_%S)".tar ~/bash-script-tutorials/* 2>/dev/null
+echo "=============================="
+echo "Hello , ${USER^}"
+echo "I will now back up data on this directory: $(pwd)"
 exit 0
