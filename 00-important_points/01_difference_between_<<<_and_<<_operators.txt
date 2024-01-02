@@ -1,0 +1,106 @@
+Link:
+https://askubuntu.com/questions/678915/whats-the-difference-between-and-in-bash
+===============================================================================
+<< is known as here-document structure. You let the program know what will be the ending text, and whenever that delimiter is seen, the program will read all the stuff you've given to the program as input and perform a task upon it.
+
+Here's what I mean:
+
+$ wc << EOF
+> one two three
+> four five
+> EOF
+ 2  5 24
+
+In this example we tell wc program to wait for EOF string, then type in five words, and then type in EOF to signal that we're done giving input. In effect, it's similar to running wc by itself, typing in words, then pressing CtrlD
+
+In bash these are implemented via temp files, usually in the form /tmp/sh-thd.<random string>, while in dash they are implemented as anonymous pipes. This can be observed via tracing system calls with strace command. Replace bash with sh to see how /bin/sh performs this redirection.
+
+$ strace -e open,dup2,pipe,write -f bash -c 'cat <<EOF
+> test
+> EOF'
+
+
+Here string
+
+<<< is known as here-string. Instead of typing in text, you give a pre-made string of text to a program. For example, with such program as bc we can do bc <<< 5*4 to just get output for that specific case, no need to run bc interactively. Think of it as the equivalent of echo '5*4' | bc.
+
+Here-strings in bash are implemented via temporary files, usually in the format /tmp/sh-thd.<random string>, which are later unlinked, thus making them occupy some memory space temporarily but not show up in the list of /tmp directory entries, and effectively exist as anonymous files, which may still be referenced via file descriptor by the shell itself, and that file descriptor being inherited by the command and later duplicated onto file descriptor 0 (stdin) via dup2() function. This can be observed via
+
+$ ls -l /proc/self/fd/ <<< "TEST"
+total 0
+lr-x------ 1 user1 user1 64 Aug 20 13:43 0 -> /tmp/sh-thd.761Lj9 (deleted)
+lrwx------ 1 user1 user1 64 Aug 20 13:43 1 -> /dev/pts/4
+lrwx------ 1 user1 user1 64 Aug 20 13:43 2 -> /dev/pts/4
+lr-x------ 1 user1 user1 64 Aug 20 13:43 3 -> /proc/10068/fd
+And via tracing syscalls (output shortened for readability; notice how temp file is opened as fd 3, data written to it, then it is re-opened with O_RDONLY flag as fd 4 and later unlinked, then dup2() onto fd 0, which is inherited by cat later ):
+
+$ strace -f -e open,read,write,dup2,unlink,execve bash -c 'cat <<< "TEST"'
+execve("/bin/bash", ["bash", "-c", "cat <<< \"TEST\""], [/* 47 vars */]) = 0
+...
+strace: Process 10229 attached
+[pid 10229] open("/tmp/sh-thd.uhpSrD", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
+[pid 10229] write(3, "TEST", 4)         = 4
+[pid 10229] write(3, "\n", 1)           = 1
+[pid 10229] open("/tmp/sh-thd.uhpSrD", O_RDONLY) = 4
+[pid 10229] unlink("/tmp/sh-thd.uhpSrD") = 0
+[pid 10229] dup2(4, 0)                  = 0
+[pid 10229] execve("/bin/cat", ["cat"], [/* 47 vars */]) = 0
+...
+[pid 10229] read(0, "TEST\n", 131072)   = 5
+[pid 10229] write(1, "TEST\n", 5TEST
+)       = 5
+[pid 10229] read(0, "", 131072)         = 0
+[pid 10229] +++ exited with 0 +++
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=10229, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
++++ exited with 0 +++
+Opinion: potentially because here strings make use of temporary text files, it is the possible reason why here-strings always insert a trailing newline, since text file by POSIX definition has to have lines that end in newline character.
+
+Process Substitution
+
+As tldp.org explains,
+
+Process substitution feeds the output of a process (or processes) into the stdin of another process.
+
+So in effect this is similar to piping stdout of one command to the other , e.g. echo foobar barfoo | wc . But notice: in the bash manpage you will see that it is denoted as <(list). So basically you can redirect output of multiple (!) commands.
+
+Note: technically when you say < < you aren't referring to one thing, but two redirection with single < and process redirection of output from <( . . .).
+
+Now what happens if we do just process substitution?
+
+$ echo <(echo bar)
+/dev/fd/63
+As you can see, the shell creates temporary file descriptor /dev/fd/63 where the output goes (which according to Gilles's answer, is an anonymous pipe). That means < redirects that file descriptor as input into a command.
+
+So very simple example would be to make process substitution of output from two echo commands into wc:
+
+$ wc < <(echo bar;echo foo)
+      2       2       8
+So here we make shell create a file descriptor for all the output that happens in the parenthesis and redirect that as input to wc .As expected, wc receives that stream from two echo commands, which by itself would output two lines, each having a word, and appropriately we have 2 words, 2 lines, and 6 characters plus two newlines counted.
+
+How is process substitution implemented ? We can find out using the trace below (output shortened for brevity)
+
+$ strace -e clone,execve,pipe,dup2 -f bash -c 'cat <(/bin/true) <(/bin/false) <(/bin/echo)'
+execve("/bin/bash", ["bash", "-c", "cat <(/bin/true) <(/bin/false) <"...], 0x7ffcb96004f8 /* 50 vars */) = 0
+pipe([3, 4])                            = 0
+dup2(3, 63)                             = 63
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f6c12569a10) = 8954
+strace: Process 8954 attached
+[pid  8953] pipe([3, 4])                = 0
+[pid  8953] dup2(3, 62)                 = 62
+[pid  8953] clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f6c12569a10) = 8955
+strace: Process 8955 attached
+[pid  8953] pipe([3, 4])                = 0
+[pid  8953] dup2(3, 61)                 = 61
+[pid  8953] clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f6c12569a10) = 8956
+[pid  8953] execve("/bin/cat", ["cat", "/dev/fd/63", "/dev/fd/62", "/dev/fd/61"], 0x55ab7566e8f0 /* 50 vars */) = 0
+The above trace on Ubuntu (which also implies on Linux in general) suggests that process substitution is implemented by repeatedly forking multiple subprocesses (so process 8953 forks multiple child processes 8954,8955,8956,etc). Then all these subprocesses communicate back via their stdout , but that is duplicated (that is copied) onto the stack of next available file descriptors starting at 63 downwards. Why start at 63 ? That may be a good question for the developers. It is known for a fact that bash can use fd 255 for saving file descriptors for the "main" command/pipeline when its streams are redirected.
+
+Side Note: Process substitution may be referred to as a bashism (a command or structure usable in advanced shells like bash, but not specified by POSIX), but it was implemented in ksh before bash's existence as ksh man page and this answer suggest. Shells like tcsh and mksh however do not have process substitution. So how could we go around redirecting output of multiple commands into another command without process substitution? Grouping plus piping!
+
+$ (echo foo;echo bar) | wc
+      2       2       8
+Effectively this is the same as above example, However, this is different under the hood from process substitution, since we make stdout of the whole subshell and stdin of wc linked with the pipe. On the other hand, process substitution makes a command read a temporary file descriptor.
+
+So if we can do grouping with piping, why do we need process substitution? Because sometimes we cannot use piping. Consider the example below - comparing outputs of two commands with diff (which needs two files, and in this case we are giving it two file descriptors)
+
+diff <(ls /bin) <(ls /usr/bin)
