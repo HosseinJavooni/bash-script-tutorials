@@ -1,4 +1,4 @@
-#============MY_BASH_THEME=============
+#============MY_BASH_THEME_V3=============
 directory_without_git() {
   result=$(git status 2> /dev/null)
   if [[ $? != 0 ]]; then
