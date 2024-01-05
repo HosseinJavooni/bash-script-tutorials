@@ -1,3 +1,4 @@
+#!/bin/bash
 #============MY_BASH_THEME_V2=============
 parse_git_branch_unstage() {
   result=$(git status 2> /dev/null)

@@ -1,3 +1,4 @@
+#!/bin/bash
 #============MY_BASH_THEME=============
 parse_git_branch() {
   git branch --show-current > /dev/null 2>&1

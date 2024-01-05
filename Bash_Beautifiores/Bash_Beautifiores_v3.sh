@@ -1,8 +1,9 @@
+#!/bin/bash
 #============MY_BASH_THEME_V3=============
 directory_without_git() {
   result=$(git status 2> /dev/null)
   if [[ $? != 0 ]]; then
-     echo "$(echo -e '\u25B6')"
+     echo "$(echo -e '\u25B6')" 
   else
      echo ""
   fi
