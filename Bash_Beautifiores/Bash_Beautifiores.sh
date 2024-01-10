@@ -9,3 +9,4 @@ parse_git_branch() {
   fi
 }
 PS1="\[\033[01;32m\]${USER}@${HOSTNAME}\[\033[00m\]:\[\033[01;34m\]\w\n\[\033[33m\]\$(parse_git_branch)\[\033[33m\]$(echo -e '\u25B6')\[\033[00m\] "
+echo "${PS1}"

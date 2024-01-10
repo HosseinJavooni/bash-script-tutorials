@@ -19,7 +19,7 @@ YELLOW_ARROW="\033[38;2;252;252;3m"
 parse_git_branch_unstage() {
   result=$(git status 2> /dev/null)
   if [[ $? = 0 && ($result == *"Untracked files:"* || $result == *"Changes not staged for commit:"*) ]]; then
-     echo " $(echo -e '\uE0A0') $(git branch --show-current) "
+     echo "$(echo -e '\uE0A0') $(git branch --show-current)"
   else
      echo ""
   fi
@@ -27,7 +27,7 @@ parse_git_branch_unstage() {
 parse_git_branch_staged() {
   result=$(git status 2> /dev/null)
   if [[ $? = 0 && $result != *"Untracked files:"* && $result != *"Changes not staged for commit:"* && $result == *"Changes to be committed:"* ]]; then
-     echo " $(echo -e '\uE0A0') $(git branch --show-current) "
+     echo "$(echo -e '\uE0A0') $(git branch --show-current)"
   else
      echo ""
   fi
@@ -35,7 +35,7 @@ parse_git_branch_staged() {
 parse_git_branch_committed() {
   result=$(git status 2> /dev/null)
   if [[ $? = 0 && $result == *"nothing to commit, working tree clean"* ]]; then
-     echo " $(echo -e '\uE0A0') $(git branch --show-current) "
+     echo "$(echo -e '\uE0A0') $(git branch --show-current)"
   else
      echo ""
   fi
@@ -80,4 +80,4 @@ PS1+="${F_GIT_2}$(echo '\uE0B0')${END}"
 PS1+="${F_GIT_3}$(echo '\uE0B2')${END}"
 PS1+="${B_GIT_3}${BOLD}$(parse_git_branch_committed)${END}"
 PS1+="${F_GIT_3}$(echo '\uE0B0')${END}"
-echo -e ${PS1}
+#echo -e ${PS1}
