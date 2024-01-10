@@ -150,16 +150,16 @@ PS1+="${END}"
 #PS1+="\n${F_U}${BOLD}╰❯${END}${F_GIT_1}$(echo -e '\uE0B0')${END}"
 
 PS1+="\n${F_U}${BOLD}╰❯${END}"
-PS1+="${F_GIT_1}$(arrow_left_unstage)${END}"
-PS1+="${B_GIT_1}${BOLD}$(parse_git_branch_unstage)${END}"
-PS1+="${F_GIT_1}$(arrow_right_unstage)${END}"
+PS1+="${F_GIT_1}\$(arrow_left_unstage)${END}"
+PS1+="${B_GIT_1}${BOLD}\$(parse_git_branch_unstage)${END}"
+PS1+="${F_GIT_1}\$(arrow_right_unstage)${END}"
 
-PS1+="${F_GIT_2}$(arrow_left_staged)${END}"
-PS1+="${B_GIT_2}${BOLD}$(parse_git_branch_staged)${END}"
-PS1+="${F_GIT_2}$(arrow_right_staged)${END}"
+PS1+="${F_GIT_2}\$(arrow_left_staged)${END}"
+PS1+="${B_GIT_2}${BOLD}\$(parse_git_branch_staged)${END}"
+PS1+="${F_GIT_2}\$(arrow_right_staged)${END}"
 
-PS1+="${F_GIT_3}$(arrow_left_committed)${END}"
-PS1+="${B_GIT_3}${BOLD}$(parse_git_branch_committed)${END}"
-PS1+="${F_GIT_3}$(arrow_right_committed)${END}"
+PS1+="${F_GIT_3}\$(arrow_left_committed)${END}"
+PS1+="${B_GIT_3}${BOLD}\$(parse_git_branch_committed)${END}"
+PS1+="${F_GIT_3}\$(arrow_right_committed)${END}"
 #echo -e ${PS1}
 
