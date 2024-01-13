@@ -140,7 +140,7 @@ PS1+="🗁 : \w \[\033[0m\]"
 #PS1+="${END}"
 #PS1+="\n${F_U}${BOLD}╰❯${END}${F_GIT_1}$(echo -e '\uE0B0')${END}"
 
-PS1+="\n\[\033[93m\]\[\033[40m\]╰❯"
+PS1+="\n\[\033[93m\]╰❯"
 
 PS1+="\[\033[31m\]\$(arrow_left_unstage)"
 PS1+="\[\033[41m\]\[\033[37m\]\$(parse_git_branch_unstage)"
