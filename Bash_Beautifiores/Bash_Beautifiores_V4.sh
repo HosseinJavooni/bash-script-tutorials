@@ -28,10 +28,12 @@ GIT_COMMITED_FOREGROUND="\[\033[32m\]"
 GIT_COMMITED_FONT_COLOR="\[\033[37m\]"
 GIT_COMMITED_BACKGROUND="\[\033[42m\]"
 #LEFT_ARROW="\uE0B2"
-LEFT_ARROW="\u25C0"
+#LEFT_ARROW="\u25C0"
+LEFT_ARROW=""
 GIT_BRANCH_ICON="\uE0A0"
 #RIGHT_ARROW="\uE0B0"
-RIGHT_ARROW="\u25B6"
+#RIGHT_ARROW="\u25B6"
+RIGHT_ARROW=""
 #---------------------------------
 arrow_left_unstage() {
   result=$(git status 2> /dev/null)
