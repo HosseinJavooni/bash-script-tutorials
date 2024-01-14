@@ -118,7 +118,7 @@ arrow_right_committed() {
 PS1="${F_U}╭─"
 PS1+="$(echo -e ${LEFT_ARROW})"
 PS1+="${B_U}"
-PS1+="${USER_FONT_COLOR}$(echo -e ${USER_ICON}): \u "
+PS1+="${USER_FONT_COLOR}$(echo -e ${USER_ICON}) \u "
 PS1+="${B_H}"
 PS1+="${F_U}"
 PS1+="$(echo -e ${RIGHT_ARROW})"
