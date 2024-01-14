@@ -139,10 +139,12 @@ F_GIT_3="\033[38;2;12;125;1m"
 B_GIT_3="\033[48;2;12;125;1m"
 YELLOW_ARROW="\033[38;2;252;252;3m"
 #LEFT_ARROW="\uE0B2"
-LEFT_ARROW="\u25C0"
+#LEFT_ARROW="\u25C0"
+LEFT_ARROW=""
 GIT_BRANCH_ICON="\uE0A0"
 #RIGHT_ARROW="\uE0B0"
-RIGHT_ARROW="\u25B6"
+#RIGHT_ARROW="\u25B6"
+RIGHT_ARROW=""
 #---------------------------------
 arrow_left_unstage() {
   result=$(git status 2> /dev/null)
