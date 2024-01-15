@@ -14,6 +14,7 @@ B_D="\[\033[44m\]"
 F_D=""
 #DIRECTORY_ICON="🗁 "
 DIRECTORY_ICON=" "
+HOME_DIRECTORY_ICON=" "
 B_H="\[\033[42m\]"
 F_H="\[\033[32m\]"
 #HOST_ICON="\xF0\x9F\x92\xBB"
@@ -43,6 +44,14 @@ GIT_ICON=""
 RIGHT_ARROW="\uE0B0"
 #RIGHT_ARROW="\u25B6"
 #---------------------------------
+home_or_directory_icon() {
+  result=$(pwd 2> /dev/null)
+  if [[ $result == $HOME ]]; then
+	  echo ${HOME_DIRECTORY_ICON}
+  else
+	  echo ${DIRECTORY_ICON}
+  fi
+}
 arrow_left_unstage() {
   result=$(git status 2> /dev/null)
   if [[ $? = 0 && ($result == *"Untracked files:"* || $result == *"Changes not staged for commit:"*) ]]; then
@@ -130,7 +139,7 @@ PS1+="${B_D}"
 PS1+="${F_H}"
 PS1+="$(echo -e ${RIGHT_ARROW})"
 PS1+="${DIRECTORY_FONT_COLOR}"
-PS1+=" ${DIRECTORY_ICON} \w  ${RESET}"
+PS1+=" \$(home_or_directory_icon) \w  ${RESET}"
 
 PS1+="\n${F_U}╰❯"
 
