@@ -1,10 +1,12 @@
 #============MY_BASH_THEME_V4=============
 #!/bin/bash
 # Author: Hossein Jabani
-# Creation date: 2024-01-13
-# Last Modification: 2024-01-13
-# Description: When you append this code to ~/.bashrc your bash prompt changes to new form.
-# Usage: just append this code to ~/.bashrc and run "source ~/.bashrc" command.
+# Created: 2024-01-13
+# Last Modified: 2024-01-13
+# Description: 
+# When you append this code to ~/.bashrc your bash prompt changes to new form.
+# Usage: 
+# just append this code to ~/.bashrc and run "source ~/.bashrc" command.
 
 BOLD="\033[1m"
 RESET="\[\033[0m\]"
